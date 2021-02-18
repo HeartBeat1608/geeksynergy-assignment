@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Arrow from './play.svg'
+import { useHistory } from 'react-router'
 
 const Card = ({ title, poster, genre, director, stars, date, runTime, language, votes }) => {
   return (
@@ -44,6 +45,7 @@ const Home = () => {
   const [state, setState] = useState([])
   const [error, setError] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const history = useHistory()
 
   const getMovieList = async () => {
     const body = { category: "movies", language: "kannada", genre: "all", sort: "voting" };
@@ -52,11 +54,16 @@ const Home = () => {
   }
 
   useEffect(() => {
+    const local = localStorage.getItem('GEEK_SYNERGY_AUTH')
+    if (!local) return history.push('/login')
+  }, [])
+
+  useEffect(() => {
     if (!state || !state.length)
       getMovieList().catch(error => {
         setError(error.message)
       })
-  })
+  }, [])
 
   return (
     <div className="container text-center">
